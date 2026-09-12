@@ -132,18 +132,8 @@
           </div>
         </div>
 
-        <!-- 焦點展示區 (Spotlight Box) -->
-        <div class="glass-panel spotlight-box">
-          <div class="spotlight-info">
-            <div class="hero-badge" style="margin-bottom:0.75rem;">🌟 特別推薦連載</div>
-            <h3>《六樓十班的奇幻時空迴廊》</h3>
-            <p>在復興大樓六樓的角落，一把神秘的青銅鑰匙開啟了時空的齒輪。隨時隨地開啟閱讀器，沉浸於奇幻冒險！</p>
-            <button class="btn btn-primary" onclick="ReaderManager.openChapter('novel-demo-1', 1)">🚀 立即試讀第一章</button>
-          </div>
-          <div class="spotlight-preview">
-            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&auto=format&fit=crop&q=80" alt="小說焦點" class="spotlight-img" />
-          </div>
-        </div>
+        <!-- 焦點展示區 (Spotlight Box - 動態生成) -->
+        <div class="glass-panel spotlight-box" id="portal-spotlight-box" style="display:none;"></div>
 
       </div>
     </section>

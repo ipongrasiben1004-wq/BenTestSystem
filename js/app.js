@@ -181,6 +181,28 @@ const App = {
         </li>
       `).join('');
     }
+
+    // 動態焦點展示區 (若有小說則推薦第一本，無小說則自動隱藏)
+    const spotlightBox = document.getElementById('portal-spotlight-box');
+    if (spotlightBox) {
+      if (novels.length > 0) {
+        const topNovel = novels[0];
+        spotlightBox.style.display = 'grid';
+        spotlightBox.innerHTML = `
+          <div class="spotlight-info">
+            <div class="hero-badge" style="margin-bottom:0.75rem;">🌟 特別推薦連載</div>
+            <h3>《${topNovel.title}》</h3>
+            <p>${topNovel.description || '精彩校園連載，立即進入閱讀器沉浸體驗！'}</p>
+            <button class="btn btn-primary" onclick="ReaderManager.openChapter('${topNovel.id}', 1)">🚀 立即試讀第一章</button>
+          </div>
+          <div class="spotlight-preview">
+            <img src="${topNovel.cover_image || 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800'}" alt="${topNovel.title}" class="spotlight-img" />
+          </div>
+        `;
+      } else {
+        spotlightBox.style.display = 'none';
+      }
+    }
   },
 
   // ================= 2. 新聞公告專區 =================
