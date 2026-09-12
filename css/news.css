@@ -155,9 +155,12 @@
   gap: 0.3rem;
 }
 
+/* ==========================================================================
+   LIKE BUTTON (高對比未按 / 已按雙態樣式與彈跳動效)
+   ========================================================================== */
 .btn-like {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-glass);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: var(--text-secondary);
   cursor: pointer;
   display: inline-flex;
@@ -165,41 +168,45 @@
   gap: 0.45rem;
   font-size: 0.88rem;
   font-weight: 600;
-  padding: 0.35rem 0.85rem;
+  padding: 0.4rem 0.95rem;
   border-radius: var(--radius-full);
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.17, 0.89, 0.32, 1.25);
   user-select: none;
 }
 
 .btn-like:hover {
-  border-color: rgba(244, 63, 94, 0.45);
-  color: var(--accent);
-  background: rgba(244, 63, 94, 0.08);
+  border-color: rgba(244, 63, 94, 0.6);
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.12);
   transform: translateY(-2px);
 }
 
+/* 已按讚狀態：強烈粉紅漸層 + 霓虹發光外框 + 鮮豔文字 */
 .btn-like.liked {
-  background: rgba(244, 63, 94, 0.16);
-  border-color: rgba(244, 63, 94, 0.55);
-  color: #f43f5e;
-  box-shadow: 0 0 16px rgba(244, 63, 94, 0.28);
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.25) 0%, rgba(225, 29, 72, 0.35) 100%) !important;
+  border: 1.5px solid #f43f5e !important;
+  color: #ff4d6d !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.45), inset 0 0 10px rgba(244, 63, 94, 0.2) !important;
+  transform: scale(1.03);
 }
 
 .btn-like .like-heart-icon {
   display: inline-block;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  line-height: 1;
   transition: transform 0.2s ease;
 }
 
 .btn-like.liked .like-heart-icon {
-  animation: heartPop 0.48s cubic-bezier(0.17, 0.89, 0.32, 1.49) forwards;
+  animation: heartPop 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.49) forwards;
 }
 
 @keyframes heartPop {
   0% { transform: scale(1); }
-  25% { transform: scale(1.45) rotate(-12deg); }
-  50% { transform: scale(0.85) rotate(6deg); }
-  75% { transform: scale(1.18) rotate(-3deg); }
+  30% { transform: scale(1.5) rotate(-14deg); }
+  60% { transform: scale(0.8) rotate(8deg); }
+  85% { transform: scale(1.2) rotate(-3deg); }
   100% { transform: scale(1) rotate(0deg); }
 }
 
