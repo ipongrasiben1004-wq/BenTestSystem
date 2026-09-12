@@ -41,8 +41,9 @@ const ReaderManager = {
       document.body.style.overflow = 'hidden';
     }
 
-    // 儲存閱讀進度
+    // 儲存閱讀進度並增加點閱
     localStorage.setItem(`fuxing610_progress_${novelId}`, chapterNumber);
+    DataStore.incrementNovelViews(novelId);
   },
 
   closeReader() {

@@ -266,12 +266,16 @@ const App = {
     const post = await DataStore.getPostById(id);
     if (!post) return;
 
+    // 即時增加瀏覽次數
+    const newViews = await DataStore.incrementPostViews(id);
+    post.views = newViews;
+
     document.getElementById('news-modal-title').textContent = post.title;
     document.getElementById('news-modal-meta').innerHTML = `
       <span class="news-meta-chip highlight">🏷️ ${post.category || '重要公告'}</span>
       <span class="news-meta-chip">✍️ 作者：${post.author_name || '復興610 小編'}</span>
       <span class="news-meta-chip">📅 發布於 ${new Date(post.created_at).toLocaleDateString('zh-TW')}</span>
-      <span class="news-meta-chip">👁️ ${post.views || 0} 次點閱</span>
+      <span class="news-meta-chip">👁️ ${post.views} 次點閱</span>
     `;
     document.getElementById('news-modal-body').textContent = post.content;
 

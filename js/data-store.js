@@ -372,6 +372,49 @@ const DataStore = {
     localStorage.setItem(this.LOCAL_CHAPTERS_KEY, '[]');
   },
 
+  // 增加文章瀏覽次數
+  async incrementPostViews(id) {
+    let updatedViews = 1;
+    const supabase = SupabaseConfig.getClient();
+    if (supabase) {
+      try {
+        const { data: currentPost } = await supabase.from('posts').select('views').eq('id', id).single();
+        if (currentPost) {
+          updatedViews = (currentPost.views || 0) + 1;
+          await supabase.from('posts').update({ views: updatedViews }).eq('id', id);
+        }
+      } catch (e) {
+        console.warn('Supabase incrementPostViews 異常:', e);
+      }
+    }
+
+    this.initLocalData();
+    let posts = JSON.parse(localStorage.getItem(this.LOCAL_POSTS_KEY) || '[]');
+    const p = posts.find(item => item.id === id);
+    if (p) {
+      p.views = (p.views || 0) + 1;
+      updatedViews = p.views;
+      localStorage.setItem(this.LOCAL_POSTS_KEY, JSON.stringify(posts));
+    }
+    return updatedViews;
+  },
+
+  // 增加小說瀏覽次數
+  async incrementNovelViews(novelId) {
+    const supabase = SupabaseConfig.getClient();
+    if (supabase) {
+      try {
+        const { data: currentNovel } = await supabase.from('novels').select('views').eq('id', novelId).single();
+        if (currentNovel) {
+          const newViews = (currentNovel.views || 0) + 1;
+          await supabase.from('novels').update({ views: newViews }).eq('id', novelId);
+        }
+      } catch (e) {
+        console.warn('Supabase incrementNovelViews 異常:', e);
+      }
+    }
+  },
+
   // 按讚與計數增加
   async likePost(id) {
     const supabase = SupabaseConfig.getClient();
