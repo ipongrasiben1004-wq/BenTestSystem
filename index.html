@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>復興610 · 綜合門戶站 | 小說 · 日記 · 新聞</title>
+  <meta name="description" content="專屬於復興610的綜合資訊網站：提供班級最新新聞公告、原創小說連載與生活札記日記。">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/portal.css">
+  <link rel="stylesheet" href="css/novel.css">
+  <link rel="stylesheet" href="css/news.css">
+  <link rel="stylesheet" href="css/diary.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- ================= 頂部導航欄 ================= -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="#portal" class="brand">
+        <span>🏛️ 復興 610</span>
+        <span class="brand-badge">PORTAL</span>
+      </a>
+
+      <nav>
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="#portal" class="nav-link active">🏠 首頁門戶</a></li>
+          <li><a href="#news" class="nav-link">📰 新聞公告</a></li>
+          <li><a href="#novels" class="nav-link">📖 小說連載</a></li>
+          <li><a href="#diaries" class="nav-link">✍️ 生活日記</a></li>
+          <li><a href="#admin" class="nav-link">⚙️ 管理後台</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn-icon" id="theme-toggle-btn" title="切換深色/淺色主題" aria-label="切換主題">
+          <span id="theme-toggle-icon">🌙</span>
+        </button>
+        <a href="#admin" class="btn btn-primary btn-sm" id="btn-quick-post">✏️ 快速發布</a>
+        <button class="btn-icon mobile-nav-toggle" id="mobile-menu-btn" aria-label="選單">
+          ☰
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= 主內容容器 ================= -->
+  <main class="main-content">
+
+    <!-- 1. 首頁門戶 (Portal View) -->
+    <section id="view-portal" class="view-container">
+      <div class="container">
+        
+        <!-- Hero Section -->
+        <div class="hero-section">
+          <div class="hero-badge">✨ 復興610 專屬官方基地 · 紀錄每一個精彩瞬間</div>
+          <h1 class="hero-title">凝聚回憶 · 創造故事 · <span>共享點滴</span></h1>
+          <p class="hero-subtitle">
+            歡迎來到復興610的綜合資訊站。無論是最新校園動態、原創小說的奇幻連載，還是溫暖真實的班級札記，都在這裡為你完整呈現。
+          </p>
+          <div class="hero-actions">
+            <a href="#novels" class="btn btn-primary">📖 探索原創小說</a>
+            <a href="#news" class="btn btn-secondary">📰 查看最新快訊</a>
+            <a href="#diaries" class="btn btn-secondary">✍️ 閱讀今日日記</a>
+          </div>
+        </div>
+
+        <!-- 數據統計橫幅 -->
+        <div class="glass-panel stats-banner">
+          <div class="stat-item">
+            <div class="stat-value primary" id="stat-total-news">0</div>
+            <div class="stat-label">📰 發布新聞公告</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value secondary" id="stat-total-novels">0</div>
+            <div class="stat-label">📖 連載小說專題</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value accent" id="stat-total-diaries">0</div>
+            <div class="stat-label">✍️ 篇生活札記</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value gold" id="stat-total-views">0</div>
+            <div class="stat-label">👁️ 累積閱讀人次</div>
+          </div>
+        </div>
+
+        <!-- 三大核心板塊快捷區 -->
+        <div class="pillars-grid">
+          <!-- 新聞板塊 -->
+          <div class="glass-card pillar-card news-card">
+            <div class="pillar-icon">📰</div>
+            <h3 class="pillar-title">新聞公告專區</h3>
+            <p class="pillar-desc">班級重要事項、活動日程、比賽喜訊與即時快訊一手掌握。</p>
+            <ul class="pillar-items" id="portal-news-list">
+              <!-- 動態載入 -->
+            </ul>
+            <a href="#news" class="btn btn-secondary btn-sm" style="margin-top:auto;">進入新聞站 →</a>
+          </div>
+
+          <!-- 小說板塊 -->
+          <div class="glass-card pillar-card novel-card">
+            <div class="pillar-icon">📖</div>
+            <h3 class="pillar-title">原創小說書庫</h3>
+            <p class="pillar-desc">校園奇幻、青春冒險連載，專為長篇閱讀量身打造護眼介面。</p>
+            <ul class="pillar-items" id="portal-novels-list">
+              <!-- 動態載入 -->
+            </ul>
+            <a href="#novels" class="btn btn-secondary btn-sm" style="margin-top:auto;">進入小說站 →</a>
+          </div>
+
+          <!-- 日記板塊 -->
+          <div class="glass-card pillar-card diary-card">
+            <div class="pillar-icon">✍️</div>
+            <h3 class="pillar-title">生活札記時間軸</h3>
+            <p class="pillar-desc">記錄日常的小小感動、放學後的微風與彼此陪伴的青澀歲月。</p>
+            <ul class="pillar-items" id="portal-diaries-list">
+              <!-- 動態載入 -->
+            </ul>
+            <a href="#diaries" class="btn btn-secondary btn-sm" style="margin-top:auto;">進入日記站 →</a>
+          </div>
+        </div>
+
+        <!-- 焦點展示區 (Spotlight Box) -->
+        <div class="glass-panel spotlight-box">
+          <div class="spotlight-info">
+            <div class="hero-badge" style="margin-bottom:0.75rem;">🌟 特別推薦連載</div>
+            <h3>《六樓十班的奇幻時空迴廊》</h3>
+            <p>在復興大樓六樓的角落，一把神秘的青銅鑰匙開啟了時空的齒輪。隨時隨地開啟閱讀器，沉浸於奇幻冒險！</p>
+            <button class="btn btn-primary" onclick="ReaderManager.openChapter('novel-demo-1', 1)">🚀 立即試讀第一章</button>
+          </div>
+          <div class="spotlight-preview">
+            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&auto=format&fit=crop&q=80" alt="小說焦點" class="spotlight-img" />
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. 新聞專區 (News View) -->
+    <section id="view-news" class="view-container" style="display:none;">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">📰 復興610 新聞與即時公告</h1>
+            <p class="section-desc">掌握班級最新消息、活動時程與重要通知</p>
+          </div>
+        </div>
+
+        <!-- 篩選器與搜尋 -->
+        <div class="news-header-toolbar glass-panel" style="padding: 1.25rem;">
+          <div class="category-filter-group">
+            <button class="category-chip active" onclick="App.filterNewsCategory('全部', this)">全部消息</button>
+            <button class="category-chip" onclick="App.filterNewsCategory('重要公告', this)">📌 重要公告</button>
+            <button class="category-chip" onclick="App.filterNewsCategory('活動快訊', this)">🎉 活動快訊</button>
+            <button class="category-chip" onclick="App.filterNewsCategory('榮譽榜', this)">🏆 榮譽榜</button>
+          </div>
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="news-search-input" class="search-input" placeholder="搜尋新聞或公告關鍵字..." oninput="App.searchNews(this.value)" />
+          </div>
+        </div>
+
+        <!-- 新聞列表 -->
+        <div class="news-list" id="news-list-container">
+          <!-- 動態載入新聞項目 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 小說專區 (Novels View) -->
+    <section id="view-novels" class="view-container" style="display:none;">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">📖 復興610 原創小說館</h1>
+            <p class="section-desc">隨時品味校園創作，支援沉浸式夜間/護眼閱讀體驗</p>
+          </div>
+          <a href="#admin" class="btn btn-primary btn-sm">+ 投稿新作品/連載</a>
+        </div>
+
+        <!-- 小說書架 Grid -->
+        <div class="novel-grid" id="novel-bookshelf-grid">
+          <!-- 動態載入小說卡片 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3.1 小說詳細目錄頁 (動態生成) -->
+    <section id="view-novel-detail" class="view-container" style="display:none;"></section>
+
+    <!-- 4. 日記專區 (Diaries View) -->
+    <section id="view-diaries" class="view-container" style="display:none;">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">✍️ 復興610 生活札記時間軸</h1>
+            <p class="section-desc">紀錄每天的心情、天氣與值得珍藏的青春時光</p>
+          </div>
+          <a href="#admin" class="btn btn-primary btn-sm">✍️ 寫新日記</a>
+        </div>
+
+        <!-- 日記時間軸列表 -->
+        <div class="diary-timeline-container" id="diary-timeline-container">
+          <!-- 動態載入日記條目 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 後台管理中心 (Admin View) -->
+    <section id="view-admin" class="view-container" style="display:none;">
+      <div class="container admin-view-container">
+        
+        <!-- 後台狀態卡片 -->
+        <div class="glass-panel admin-header-card">
+          <div>
+            <h1 style="font-size: 1.65rem; margin-bottom: 0.5rem;">⚙️ 復興610 管理與發文後台</h1>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+              隨時隨地發布新聞公告、新增日記隨筆、連載小說章節，或設定雲端資料庫。
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div id="admin-login-status"></div>
+            <button class="btn btn-primary btn-sm" id="btn-admin-auth-action">登入管理員</button>
+          </div>
+        </div>
+
+        <!-- 未登入提示 -->
+        <div id="admin-locked-notice" class="glass-card" style="padding: 3rem; text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+          <h2 style="margin-bottom: 0.75rem;">管理後台已受密碼保護</h2>
+          <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.5rem;">
+            請點擊右上角「登入管理員」輸入密碼以解鎖發文與資料管理權限。
+          </p>
+          <button class="btn btn-primary" onclick="AdminManager.openLoginModal()">立即登入</button>
+        </div>
+
+        <!-- 後台主工作區 (登入後顯示) -->
+        <div id="admin-cms-workspace" style="display:none;">
+          
+          <!-- Supabase 設定橫幅 -->
+          <div class="supabase-config-banner">
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              ⚡ Supabase 雲端資料庫狀態
+            </h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+              目前支援「本地示範模式 (LocalStorage)」與「Supabase 雲端即時同步」。在下方填入 Supabase URL 與 Key 即可切換至雲端模式！
+            </p>
+            <form id="form-db-config" class="form-row">
+              <input type="text" id="supabase-url-input" class="form-input" placeholder="Supabase Project URL (例如 https://xyz.supabase.co)" />
+              <input type="text" id="supabase-key-input" class="form-input" placeholder="Supabase anon Key" />
+              <button type="submit" class="btn btn-primary btn-sm" style="white-space:nowrap;">儲存設定</button>
+            </form>
+          </div>
+
+          <!-- CMS 功能標籤頁 -->
+          <div class="admin-tabs">
+            <button class="admin-tab-btn active" data-tab="tab-news">📰 發布新聞公告</button>
+            <button class="admin-tab-btn" data-tab="tab-diary">✍️ 撰寫生活日記</button>
+            <button class="admin-tab-btn" data-tab="tab-chapter">📑 新增小說章節</button>
+            <button class="admin-tab-btn" data-tab="tab-novel">📖 建立新小說</button>
+            <button class="admin-tab-btn" data-tab="tab-manage">🗂️ 文章管理列表</button>
+          </div>
+
+          <!-- Tab 1: 發布新聞 -->
+          <div id="tab-news" class="admin-tab-pane glass-panel" style="padding: 2rem;">
+            <h2 style="font-size: 1.35rem; margin-bottom: 1.5rem;">📰 發布新公告或新聞</h2>
+            <form id="form-publish-news" class="admin-form-grid">
+              <div class="form-group">
+                <label class="form-label">新聞標題</label>
+                <input type="text" id="news-form-title" class="form-input" placeholder="例如：【公告】下週校慶活動須知" required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">分類</label>
+                  <select id="news-form-cat" class="form-select">
+                    <option value="重要公告">📌 重要公告</option>
+                    <option value="活動快訊">🎉 活動快訊</option>
+                    <option value="榮譽榜">🏆 榮譽榜</option>
+                    <option value="一般消息">💬 一般消息</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">發布者名稱</label>
+                  <input type="text" id="news-form-author" class="form-input" value="復興610 小編" />
+                </div>
+                <div class="form-group" style="justify-content: flex-end;">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding-bottom: 0.6rem;">
+                    <input type="checkbox" id="news-form-pinned" />
+                    <span>📌 置頂此公告</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">公告詳細內容 (支援換行排版)</label>
+                <textarea id="news-form-content" class="form-textarea" placeholder="請在此輸入公告內容..." required></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">🚀 即時發布新聞</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Tab 2: 撰寫日記 -->
+          <div id="tab-diary" class="admin-tab-pane glass-panel" style="padding: 2rem; display:none;">
+            <h2 style="font-size: 1.35rem; margin-bottom: 1.5rem;">✍️ 記錄今日生活札記</h2>
+            <form id="form-publish-diary" class="admin-form-grid">
+              <div class="form-group">
+                <label class="form-label">日記標題</label>
+                <input type="text" id="diary-form-title" class="form-input" placeholder="例如：放學後的走廊隨筆" required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">記錄者姓名/暱稱</label>
+                  <input type="text" id="diary-form-author" class="form-input" placeholder="例如：小宇" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">今日心情</label>
+                  <select id="diary-form-mood" class="form-select">
+                    <option value="happy">😊 開心愉悅</option>
+                    <option value="calm">🌿 平靜祥和</option>
+                    <option value="inspired">💡 靈感滿滿</option>
+                    <option value="tired">😴 有點疲憊</option>
+                    <option value="excited">🔥 熱血沸騰</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">今日天氣</label>
+                  <select id="diary-form-weather" class="form-select">
+                    <option value="sunny">☀️ 晴空萬里</option>
+                    <option value="cloudy">⛅ 多雲微陰</option>
+                    <option value="rainy">🌧️ 綿綿細雨</option>
+                    <option value="windy">🍃 微風徐徐</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">札記內容</label>
+                <textarea id="diary-form-content" class="form-textarea" placeholder="寫下今天發生了什麼有趣的事情..." required></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">✍️ 發布日記札記</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Tab 3: 新增小說章節 -->
+          <div id="tab-chapter" class="admin-tab-pane glass-panel" style="padding: 2rem; display:none;">
+            <h2 style="font-size: 1.35rem; margin-bottom: 1.5rem;">📑 連載小說新章節</h2>
+            <form id="form-add-chapter" class="admin-form-grid">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">選擇目標小說</label>
+                  <select id="chapter-form-novel-id" class="form-select" required>
+                    <!-- 動態載入小說選項 -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">章節序號 (整數)</label>
+                  <input type="number" id="chapter-form-num" class="form-input" min="1" value="1" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">章節名稱</label>
+                <input type="text" id="chapter-form-title" class="form-input" placeholder="例如：第一章：窗邊最後一排的秘密" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">章節內文 (支援段落換行，閱讀器會自動排版)</label>
+                <textarea id="chapter-form-content" class="form-textarea" style="min-height: 280px;" placeholder="在此貼上或輸入章節正文..." required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">作者的話 / 後記 (選填)</label>
+                <input type="text" id="chapter-form-notes" class="form-input" placeholder="例如：感謝大家閱讀，歡迎在下方按讚留言！" />
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">📖 發布新章節</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Tab 4: 建立新小說 -->
+          <div id="tab-novel" class="admin-tab-pane glass-panel" style="padding: 2rem; display:none;">
+            <h2 style="font-size: 1.35rem; margin-bottom: 1.5rem;">📖 建立全新小說作品</h2>
+            <form id="form-create-novel" class="admin-form-grid">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">小說書名</label>
+                  <input type="text" id="novel-form-title" class="form-input" placeholder="例如：六樓十班的奇幻時空迴廊" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">作者名稱</label>
+                  <input type="text" id="novel-form-author" class="form-input" placeholder="例如：復興編劇社" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">分類</label>
+                  <input type="text" id="novel-form-cat" class="form-input" value="校園奇幻" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">封面圖片網址 (可使用 Unsplash 圖片或上傳網址)</label>
+                <input type="url" id="novel-form-cover" class="form-input" placeholder="https://images.unsplash.com/..." />
+              </div>
+              <div class="form-group">
+                <label class="form-label">作品故事簡介</label>
+                <textarea id="novel-form-desc" class="form-textarea" placeholder="寫下這部作品的故事背景與看點..." required></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">🚀 建立小說作品</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Tab 5: 管理已發布內容 -->
+          <div id="tab-manage" class="admin-tab-pane glass-panel" style="padding: 2rem; display:none;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+              <h2 style="font-size: 1.35rem;">🗂️ 現有內容列表（新聞、日記、小說）</h2>
+              <button class="btn btn-danger btn-sm" onclick="AdminManager.clearAllSampleData()">🧹 一鍵清空所有預設範例</button>
+            </div>
+            <div class="admin-table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>類型</th>
+                    <th>標題</th>
+                    <th>作者</th>
+                    <th>發布日期</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-posts-tbody">
+                  <!-- 動態載入文章 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= 全螢幕沉浸式小說閱讀器 ================= -->
+  <div id="reader-wrapper" class="reader-wrapper">
+    <div class="reader-navbar">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="reader-control-btn" onclick="ReaderManager.closeReader()">← 退出閱讀</button>
+        <span class="reader-nav-title" id="reader-nav-title">小說標題</span>
+      </div>
+
+      <div class="reader-controls">
+        <!-- 主題切換 -->
+        <div class="reader-theme-picker">
+          <div class="theme-chip dark active" data-theme="dark" onclick="ReaderManager.applyReaderTheme('dark')" title="深色模式"></div>
+          <div class="theme-chip paper" data-theme="paper" onclick="ReaderManager.applyReaderTheme('paper')" title="羊皮紙護眼"></div>
+          <div class="theme-chip eye" data-theme="eye" onclick="ReaderManager.applyReaderTheme('eye')" title="綠意舒眼"></div>
+          <div class="theme-chip white" data-theme="white" onclick="ReaderManager.applyReaderTheme('white')" title="純白明亮"></div>
+        </div>
+
+        <!-- 字體放大/縮小 -->
+        <button class="reader-control-btn" onclick="ReaderManager.changeFontSize(-2)" title="字體縮小">A-</button>
+        <button class="reader-control-btn" onclick="ReaderManager.changeFontSize(2)" title="字體放大">A+</button>
+      </div>
+    </div>
+
+    <div class="reader-container">
+      <header class="reader-article-header">
+        <div class="reader-novel-name" id="reader-novel-name">小說作品名</div>
+        <h1 class="reader-chapter-title" id="reader-chapter-title">第 1 章：章節標題</h1>
+        <div class="reader-meta">
+          <span id="reader-meta-date">發布時間：2026-09-12</span>
+          <span id="reader-meta-words">字數：約 1200 字</span>
+        </div>
+      </header>
+
+      <article class="reader-body" id="reader-body-content">
+        <!-- 章節正文由 JS 填入 -->
+      </article>
+
+      <div class="reader-author-notes" id="reader-author-notes-box" style="display:none;">
+        <h4>📝 作者的話：</h4>
+        <p id="reader-author-notes-text"></p>
+      </div>
+
+      <div class="reader-pagination">
+        <button class="btn btn-secondary" id="reader-btn-prev" onclick="ReaderManager.prevChapter()">← 上一章</button>
+        <button class="btn btn-secondary" onclick="ReaderManager.closeReader()">📑 回目錄</button>
+        <button class="btn btn-primary" id="reader-btn-next" onclick="ReaderManager.nextChapter()">下一章 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 彈窗 1：新聞公告詳細彈窗 ================= -->
+  <div class="modal-overlay" id="modal-news-detail">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 style="font-size: 1.25rem;">📰 新聞公告內容</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="news-detail-view">
+        <h1 class="news-detail-title" id="news-modal-title">公告標題</h1>
+        <div class="news-detail-meta" id="news-modal-meta">
+          <!-- 標籤與時間 -->
+        </div>
+        <div class="news-detail-body" id="news-modal-body">
+          <!-- 內容 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 彈窗 2：管理員登入彈窗 ================= -->
+  <div class="modal-overlay" id="modal-admin-login">
+    <div class="modal-content" style="max-width: 420px;">
+      <div class="modal-header">
+        <h2 style="font-size: 1.25rem;">🔐 管理員身分驗證</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="admin-login-form">
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="form-label">請輸入管理密碼</label>
+          <input type="password" id="admin-pin-input" class="form-input" placeholder="請輸入管理密碼" autofocus required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">驗證並登入後台</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast 提示容器 -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ================= 頁尾 Footer ================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>🏛️ 復興 610 綜合門戶站</h3>
+          <p>凝聚班級回憶、展現原創文采、傳遞校園新鮮事。為復興610量身打造的專屬空間。</p>
+        </div>
+        <div class="footer-col">
+          <h4>導覽目錄</h4>
+          <ul>
+            <li><a href="#portal">首頁門戶</a></li>
+            <li><a href="#news">新聞公告</a></li>
+            <li><a href="#novels">原創小說</a></li>
+            <li><a href="#diaries">生活日記</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>網站特色</h4>
+          <ul>
+            <li><a href="#novels">護眼小說閱讀器</a></li>
+            <li><a href="#admin">線上後台隨時發文</a></li>
+            <li><a href="#diaries">時間軸生活札記</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>技術支援</h4>
+          <ul>
+            <li><a>GitHub Pages 靜態託管</a></li>
+            <li><a>Supabase 雲端資料庫</a></li>
+            <li><a>支援自訂獨立網域</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 復興610 Portal. All rights reserved.</div>
+        <div>Designed with ❤️ for 復興610</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 應用程式核心腳本 -->
+  <script src="js/supabase-config.js"></script>
+  <script src="js/data-store.js"></script>
+  <script src="js/reader.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
