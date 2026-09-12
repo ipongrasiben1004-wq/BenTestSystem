@@ -172,32 +172,81 @@
   transform: scale(1.08);
 }
 
-/* News Detail Modal Content */
+/* ==========================================================================
+   NEWS DETAIL MODAL (高級現代排版)
+   ========================================================================== */
+.modal-content.news-modal-box {
+  max-width: 740px;
+  padding: 2.2rem 2.5rem;
+  background: var(--bg-surface-elevated);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.8), 0 0 35px rgba(99, 102, 241, 0.2);
+}
+
 .news-detail-view {
-  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .news-detail-title {
-  font-size: 1.85rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 800;
   line-height: 1.35;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
 }
 
 .news-detail-meta {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 1.75rem;
-  padding-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--border-glass);
 }
 
-.news-detail-body {
-  font-size: 1.05rem;
-  line-height: 1.8;
-  color: var(--text-primary);
-  white-space: pre-wrap;
-  margin-bottom: 2rem;
+.news-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap; /* 徹底杜絕文字擠壓換行 */
 }
+
+.news-meta-chip.highlight {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border-color: rgba(99, 102, 241, 0.35);
+  font-weight: 700;
+}
+
+.news-detail-body {
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.18);
+  padding: 1.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-glass);
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 1.75rem;
+  min-height: 120px;
+}
+
+.news-detail-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-glass);
+}
+

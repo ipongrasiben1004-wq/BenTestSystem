@@ -268,12 +268,22 @@ const App = {
 
     document.getElementById('news-modal-title').textContent = post.title;
     document.getElementById('news-modal-meta').innerHTML = `
-      <span>🏷️ ${post.category || '公告'}</span>
-      <span>✍️ 作者：${post.author_name || '復興610 小編'}</span>
-      <span>📅 發布時間：${new Date(post.created_at).toLocaleDateString('zh-TW')}</span>
-      <span>👁️ ${post.views || 0} 次點閱</span>
+      <span class="news-meta-chip highlight">🏷️ ${post.category || '重要公告'}</span>
+      <span class="news-meta-chip">✍️ 作者：${post.author_name || '復興610 小編'}</span>
+      <span class="news-meta-chip">📅 發布於 ${new Date(post.created_at).toLocaleDateString('zh-TW')}</span>
+      <span class="news-meta-chip">👁️ ${post.views || 0} 次點閱</span>
     `;
     document.getElementById('news-modal-body').textContent = post.content;
+
+    const modalFooter = document.getElementById('news-modal-footer');
+    if (modalFooter) {
+      modalFooter.innerHTML = `
+        <button class="btn-like" onclick="App.handleLikePost('${post.id}', this)" style="font-size:0.95rem; font-weight:600; padding: 0.4rem 0.8rem; background: var(--bg-surface); border-radius: var(--radius-full); border: 1px solid var(--border-glass);">
+          ❤️ <span>${post.likes || 0}</span> 個讚
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="App.closeModal('modal-news-detail')">關閉視窗</button>
+      `;
+    }
 
     this.openModal('modal-news-detail');
   },
