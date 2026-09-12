@@ -228,27 +228,31 @@ const App = {
       return;
     }
 
-    container.innerHTML = filtered.map(news => `
-      <div class="glass-card news-card ${news.is_pinned ? 'pinned' : ''}">
-        <div class="news-top-meta">
-          ${news.is_pinned ? '<span class="badge-pinned">📌 置頂公告</span>' : ''}
-          <span class="news-category-badge">${news.category || '一般'}</span>
-          <span class="news-date">發布於 ${new Date(news.created_at).toLocaleDateString('zh-TW')}</span>
-          <span style="color: var(--text-muted);">· 作者: ${news.author_name || '610小編'}</span>
-        </div>
-        <h3 class="news-card-title" onclick="App.openNewsDetail('${news.id}')">${news.title}</h3>
-        <p class="news-card-excerpt">${news.excerpt || news.content.substring(0, 120)}</p>
-        <div class="news-bottom-meta">
-          <div class="news-stats-group">
-            <span class="stat-tag">👁️ ${news.views || 0} 次瀏覽</span>
-            <button class="btn-like" onclick="App.handleLikePost('${news.id}', this)">
-              ❤️ <span>${news.likes || 0}</span>
-            </button>
+    container.innerHTML = filtered.map(news => {
+      const isLiked = DataStore.isPostLiked(news.id);
+      return `
+        <div class="glass-card news-card ${news.is_pinned ? 'pinned' : ''}">
+          <div class="news-top-meta">
+            ${news.is_pinned ? '<span class="badge-pinned">📌 置頂公告</span>' : ''}
+            <span class="news-category-badge">${news.category || '一般'}</span>
+            <span class="news-date">發布於 ${new Date(news.created_at).toLocaleDateString('zh-TW')}</span>
+            <span style="color: var(--text-muted);">· 作者: ${news.author_name || '610小編'}</span>
           </div>
-          <button class="btn btn-secondary btn-sm" onclick="App.openNewsDetail('${news.id}')">閱讀完整內容 →</button>
+          <h3 class="news-card-title" onclick="App.openNewsDetail('${news.id}')">${news.title}</h3>
+          <p class="news-card-excerpt">${news.excerpt || news.content.substring(0, 120)}</p>
+          <div class="news-bottom-meta">
+            <div class="news-stats-group">
+              <span class="stat-tag">👁️ ${news.views || 0} 次瀏覽</span>
+              <button class="btn-like ${isLiked ? 'liked' : ''}" data-post-id="${news.id}" onclick="App.handleLikePost('${news.id}', this)" title="${isLiked ? '點擊取消按讚' : '點擊送出愛心'}">
+                <span class="like-heart-icon">${isLiked ? '❤️' : '🤍'}</span>
+                <span class="like-count">${news.likes || 0}</span>
+              </button>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="App.openNewsDetail('${news.id}')">閱讀完整內容 →</button>
+          </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   },
 
   filterNewsCategory(cat, el) {
@@ -270,6 +274,8 @@ const App = {
     const newViews = await DataStore.incrementPostViews(id);
     post.views = newViews;
 
+    const isLiked = DataStore.isPostLiked(post.id);
+
     document.getElementById('news-modal-title').textContent = post.title;
     document.getElementById('news-modal-meta').innerHTML = `
       <span class="news-meta-chip highlight">🏷️ ${post.category || '重要公告'}</span>
@@ -282,8 +288,9 @@ const App = {
     const modalFooter = document.getElementById('news-modal-footer');
     if (modalFooter) {
       modalFooter.innerHTML = `
-        <button class="btn-like" onclick="App.handleLikePost('${post.id}', this)" style="font-size:0.95rem; font-weight:600; padding: 0.4rem 0.8rem; background: var(--bg-surface); border-radius: var(--radius-full); border: 1px solid var(--border-glass);">
-          ❤️ <span>${post.likes || 0}</span> 個讚
+        <button class="btn-like ${isLiked ? 'liked' : ''}" data-post-id="${post.id}" onclick="App.handleLikePost('${post.id}', this)" title="${isLiked ? '點擊取消按讚' : '點擊送出愛心'}" style="font-size:0.95rem; font-weight:600; padding: 0.45rem 1rem;">
+          <span class="like-heart-icon">${isLiked ? '❤️' : '🤍'}</span>
+          <span class="like-count">${post.likes || 0}</span> 個讚
         </button>
         <button class="btn btn-primary btn-sm" onclick="App.closeModal('modal-news-detail')">關閉視窗</button>
       `;
@@ -415,6 +422,7 @@ const App = {
       const d = new Date(item.created_at);
       const day = d.getDate();
       const monthYear = `${d.getFullYear()}.${d.getMonth() + 1}`;
+      const isLiked = DataStore.isPostLiked(item.id);
 
       return `
         <div class="diary-entry">
@@ -434,8 +442,9 @@ const App = {
             <p class="diary-body">${item.content}</p>
             <div class="diary-footer">
               <span>✍️ 記錄者：${item.author_name || '同學'}</span>
-              <button class="btn-like" onclick="App.handleLikePost('${item.id}', this)">
-                ❤️ <span>${item.likes || 0}</span> 溫暖點讚
+              <button class="btn-like ${isLiked ? 'liked' : ''}" data-post-id="${item.id}" onclick="App.handleLikePost('${item.id}', this)" title="${isLiked ? '點擊取消按讚' : '點擊送出愛心'}">
+                <span class="like-heart-icon">${isLiked ? '❤️' : '🤍'}</span>
+                <span class="like-count">${item.likes || 0}</span> 溫暖點讚
               </button>
             </div>
           </div>
@@ -446,11 +455,25 @@ const App = {
 
   // ================= 互動輔助 (讚 / 彈窗 / 提示) =================
   async handleLikePost(id, btnEl) {
-    const count = await DataStore.likePost(id);
-    const span = btnEl.querySelector('span');
-    if (span) span.textContent = count;
-    btnEl.classList.add('liked');
-    this.showToast('❤️ 感謝您的溫暖點讚與支持！', 'success');
+    const result = await DataStore.toggleLikePost(id);
+    
+    // 全站同步該貼文的所有按讚按鈕（包括新聞卡片、彈窗、日記列表）
+    document.querySelectorAll(`.btn-like[data-post-id="${id}"]`).forEach(btn => {
+      btn.classList.toggle('liked', result.isLiked);
+      btn.title = result.isLiked ? '點擊取消按讚' : '點擊送出愛心';
+      
+      const icon = btn.querySelector('.like-heart-icon');
+      if (icon) icon.textContent = result.isLiked ? '❤️' : '🤍';
+
+      const countSpan = btn.querySelector('.like-count');
+      if (countSpan) countSpan.textContent = result.likes;
+    });
+
+    if (result.isLiked) {
+      this.showToast('❤️ 感謝您的溫暖點讚！', 'success');
+    } else {
+      this.showToast('🤍 已取消點讚', 'info');
+    }
   },
 
   openModal(modalId) {

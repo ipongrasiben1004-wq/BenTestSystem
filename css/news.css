@@ -156,20 +156,51 @@
 }
 
 .btn-like {
-  background: none;
-  border: none;
-  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  color: var(--text-secondary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.45rem;
   font-size: 0.88rem;
-  transition: all var(--transition-fast);
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
 }
 
-.btn-like:hover, .btn-like.liked {
+.btn-like:hover {
+  border-color: rgba(244, 63, 94, 0.45);
   color: var(--accent);
-  transform: scale(1.08);
+  background: rgba(244, 63, 94, 0.08);
+  transform: translateY(-2px);
+}
+
+.btn-like.liked {
+  background: rgba(244, 63, 94, 0.16);
+  border-color: rgba(244, 63, 94, 0.55);
+  color: #f43f5e;
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.28);
+}
+
+.btn-like .like-heart-icon {
+  display: inline-block;
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.btn-like.liked .like-heart-icon {
+  animation: heartPop 0.48s cubic-bezier(0.17, 0.89, 0.32, 1.49) forwards;
+}
+
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.45) rotate(-12deg); }
+  50% { transform: scale(0.85) rotate(6deg); }
+  75% { transform: scale(1.18) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0deg); }
 }
 
 /* ==========================================================================

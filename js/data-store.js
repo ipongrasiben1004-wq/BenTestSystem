@@ -415,32 +415,68 @@ const DataStore = {
     }
   },
 
-  // 按讚與計數增加
-  async likePost(id) {
+  // 檢查目前裝置是否已對該文章按讚
+  isPostLiked(id) {
+    const likedList = JSON.parse(localStorage.getItem('fuxing610_user_liked_posts') || '[]');
+    return likedList.includes(id);
+  },
+
+  // 裝置按讚 / 取消按讚切換 (Toggle Like)
+  async toggleLikePost(id) {
+    let likedList = JSON.parse(localStorage.getItem('fuxing610_user_liked_posts') || '[]');
+    const isCurrentlyLiked = likedList.includes(id);
+    let newLikes = 0;
+
+    // 先取得現有讚數
     const supabase = SupabaseConfig.getClient();
+    let currentLikes = 0;
+
     if (supabase) {
       try {
-        // 先取得最新讚數
         const { data: currentPost } = await supabase.from('posts').select('likes').eq('id', id).single();
-        if (currentPost) {
-          const newLikes = (currentPost.likes || 0) + 1;
-          await supabase.from('posts').update({ likes: newLikes }).eq('id', id);
-          return newLikes;
-        }
+        if (currentPost) currentLikes = currentPost.likes || 0;
       } catch (e) {
-        console.warn('Supabase likePost 失敗:', e);
+        console.warn('Supabase 取得讚數異常:', e);
+      }
+    } else {
+      this.initLocalData();
+      let posts = JSON.parse(localStorage.getItem(this.LOCAL_POSTS_KEY) || '[]');
+      const p = posts.find(item => item.id === id);
+      if (p) currentLikes = p.likes || 0;
+    }
+
+    if (isCurrentlyLiked) {
+      // 取消按讚 (-1)
+      newLikes = Math.max(0, currentLikes - 1);
+      likedList = likedList.filter(item => item !== id);
+    } else {
+      // 首次按讚 (+1)
+      newLikes = currentLikes + 1;
+      likedList.push(id);
+    }
+
+    // 更新本地裝置按讚紀錄
+    localStorage.setItem('fuxing610_user_liked_posts', JSON.stringify(likedList));
+
+    // 更新 Supabase 雲端
+    if (supabase) {
+      try {
+        await supabase.from('posts').update({ likes: newLikes }).eq('id', id);
+      } catch (e) {
+        console.warn('Supabase update likes 失敗:', e);
       }
     }
 
+    // 更新本地快取
     this.initLocalData();
     let posts = JSON.parse(localStorage.getItem(this.LOCAL_POSTS_KEY) || '[]');
     const p = posts.find(item => item.id === id);
     if (p) {
-      p.likes = (p.likes || 0) + 1;
+      p.likes = newLikes;
       localStorage.setItem(this.LOCAL_POSTS_KEY, JSON.stringify(posts));
-      return p.likes;
     }
-    return 1;
+
+    return { isLiked: !isCurrentlyLiked, likes: newLikes };
   }
 };
 
